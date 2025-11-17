@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>φ-RING Mobile Console v0.9.5</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); color: #e0e0e0; padding: 15px; min-height: 100vh; overflow-x: hidden; }
+        .header { text-align: center; margin-bottom: 25px; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 15px; border: 2px solid #00ff41; box-shadow: 0 0 30px rgba(0,255,65,0.3); }
+        .header h1 { font-size: 1.8em; color: #00ff41; text-shadow: 0 0 20px rgba(0,255,65,0.5); margin-bottom: 8px; }
+        .header .subtitle { color: #888; font-size: 0.9em; font-style: italic; }
+        .header .version { display: inline-block; margin-top: 8px; padding: 4px 12px; background: rgba(0,255,65,0.1); border: 1px solid #00ff41; border-radius: 15px; font-size: 0.8em; color: #00ff41; }
+        .status-banner { background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%); color: #000; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 0.95em; margin-bottom: 20px; animation: pulse 3s infinite; }
+        .status-banner.error { background: linear-gradient(135deg, #ff4141 0%, #cc3333 100%); color: #fff; }
+        .status-banner.warning { background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%); color: #000; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+        .metrics-grid { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: rgba(0,0,0,0.7); border: 2px solid #333; border-radius: 12px; padding: 18px; position: relative; overflow: hidden; }
+        .metric-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #00ff41, transparent); animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .metric-card.critical { border-color: #ff4141; background: rgba(255,65,65,0.1); }
+        .metric-card.warning { border-color: #ffa500; background: rgba(255,165,0,0.1); }
+        .metric-card.ok { border-color: #00ff41; }
+        .metric-card h3 { color: #00ff41; font-size: 1.1em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .metric-card .icon { font-size: 1.3em; }
+        .metric-value { font-size: 1.8em; font-weight: bold; color: #fff; margin: 12px 0; }
+        .metric-label { color: #888; font-size: 0.85em; margin-bottom: 5px; }
+        .metric-bar { background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden; margin: 10px 0; }
+        .metric-bar-fill { height: 100%; background: linear-gradient(90deg, #00ff41, #00cc33); transition: width 0.5s ease; border-radius: 5px; }
+        .metric-bar-fill.warning { background: linear-gradient(90deg, #ffa500, #ff8c00); }
+        .metric-bar-fill.critical { background: linear-gradient(90deg, #ff4141, #cc3333); }
+        .metric-status { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; margin-top: 8px; }
+        .metric-status.ok { background: rgba(0,255,65,0.2); color: #00ff41; border: 1px solid #00ff41; }
+        .metric-status.warning { background: rgba(255,165,0,0.2); color: #ffa500; border: 1px solid #ffa500; }
+        .metric-status.critical { background: rgba(255,65,65,0.2); color: #ff4141; border: 1px solid #ff4141; }
+        .actions { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        button { background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%); color: #000; border: none; padding: 12px 20px; font-size: 0.95em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,255,65,0.3); touch-action: manipulation; }
+        button:active { transform: scale(0.95); }
+        button.secondary { background: linear-gradient(135deg, #4169e1 0%, #3150b8 100%); color: #fff; box-shadow: 0 4px 15px rgba(65,105,225,0.3); }
+        .info-panel { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; padding: 15px; margin-top: 20px; }
+        .info-panel h3 { color: #00ff41; margin-bottom: 12px; font-size: 1em; }
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .info-item { display: flex; justify-content: space-between; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 5px; font-size: 0.9em; }
+        .info-item .label { color: #888; }
+        .info-item .value { color: #00ff41; font-weight: bold; }
+        .footer { text-align: center; margin-top: 30px; padding: 15px; color: #666; border-top: 1px solid #333; font-size: 0.85em; }
+        .mode-badge { position: fixed; top: 10px; right: 10px; background: rgba(255,165,0,0.2); color: #ffa500; padding: 5px 10px; border-radius: 15px; font-size: 0.75em; border: 1px solid #ffa500; z-index: 1000; }
+        
+        /* LOG MODAL */
+        #logModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; padding: 20px; overflow-y: auto; }
+        .log-container { max-width: 500px; margin: 0 auto; background: #111; padding: 20px; border-radius: 15px; border: 2px solid #00ff41; }
+        .log-container h2 { color: #00ff41; text-align: center; margin-bottom: 15px; }
+        #logInput { width: 100%; height: 100px; background: #222; color: #00ff41; border: 1px solid #00ff41; border-radius: 8px; padding: 10px; font-family: 'Courier New', monospace; margin-bottom: 10px; resize: vertical; }
+        #logList { margin-top: 20px; max-height: 300px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+        .log-entry { background: #111; padding: 10px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #00ff41; font-size: 0.9em; }
+        .log-timestamp { color: #888; font-size: 0.8em; }
+        .log-text { color: #00ff41; word-break: break-all; margin-top: 4px; }
+        .log-delete { float: right; background: #ff4141; color: #fff; border: none; padding: 4px 8px; font-size: 0.75em; border-radius: 4px; margin-top: 5px; cursor: pointer; }
+        
+        @media (min-width: 768px) { .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="mode-badge">📱 OFFLINE v0.9.5</div>
+
+    <div class="header">
+        <h1>🔐 φ-RING MOBILE</h1>
+        <p class="subtitle">Offline Console · Samsung A53</p>
+        <span class="version">v0.9.5-mobile</span>
+    </div>
+
+    <div id="statusBanner" class="status-banner">✅ ALL SYSTEMS OPERATIONAL</div>
+
+    <div id="metricsGrid" class="metrics-grid"></div>
+
+    <div class="actions">
+        <button onclick="refreshDashboard()">🔄 Next State</button>
+        <button onclick="resetDemo()" class="secondary">🔁 Reset</button>
+        <button onclick="toggleAutoRefresh()" class="secondary">⏯️ Auto</button>
+        <button onclick="openLogModal()" class="secondary">📝 Log</button>
+    </div>
+
+    <div class="info-panel">
+        <h3>📋 System Information</h3>
+        <div class="info-grid">
+            <div class="info-item"><span class="label">Mode:</span><span class="value">Offline + Logging</span></div>
+            <div class="info-item"><span class="label">Device:</span><span class="value">Samsung A53</span></div>
+            <div class="info-item"><span class="label">Current State:</span><span class="value" id="currentState">1 of 3</span></div>
+            <div class="info-item"><span class="label">Last Updated:</span><span class="value" id="lastUpdated">—</span></div>
+            <div class="info-item"><span class="label">Auto-Refresh:</span><span class="value" id="autoRefresh">OFF</span></div>
+            <div class="info-item"><span class="label">Saved Logs:</span><span class="value" id="logCount">0</span></div>
+            <div class="info-item"><span class="label">Monthly Cost:</span><span class="value">$0.00</span></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>φ-RING Mobile v0.9.5 · Trinidad Protocol</p>
+        <p style="font-size: 0.85em; margin-top: 8px; color: #555;">
+            "Zero cloud. Zero cost. Maximum control."
+        </p>
+    </div>
+
+    <!-- LOG MODAL -->
+    <div id="logModal">
+        <div class="log-container">
+            <h2>📓 φ-RING DATA LOG</h2>
+            
+            <textarea id="logInput" placeholder="Enter event, SSS share, or note...&#10;Example: SSS Share #1: xxxxx-xxxxx&#10;Example: Critical quota reached at 18:45 AST"></textarea>
+            
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button onclick="saveLog()">💾 Save</button>
+                <button onclick="downloadLogs()" class="secondary">⬇️ Export</button>
+                <button onclick="clearAllLogs()" style="background:#ff8c00; color:#000;">🗑️ Clear All</button>
+                <button onclick="closeLogModal()" style="background:#ff4141; color:#fff;">✖️ Close</button>
+            </div>
+
+            <div id="logList">
+                <p style="color:#888; text-align:center; padding:20px;">No logs yet. Start logging.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // φ-RING MOBILE DATA - 3 ROTATING STATES
+        // ═══════════════════════════════════════════════════════════
+        const ROTATING_DATA = [
+            {
+                status: 'OK',
+                message: '✅ ALL SYSTEMS OPERATIONAL',
+                metrics: [
+                    { metric: 'Supabase Storage', current: '45 MB', limit: '500 MB', percent: 9, status: '🟢 OK' },
+                    { metric: 'Drive Storage', current: '18 GB', limit: '105 GB', percent: 17, status: '🟢 OK' },
+                    { metric: 'GAS Daily Calls', current: '234', limit: '20,000', percent: 1, status: '🟢 OK' },
+                    { metric: 'GitHub Actions', current: '12 min', limit: '2,000 min', percent: 0.6, status: '🟢 OK' }
+                ]
+            },
+            {
+                status: 'WARNING',
+                message: '⚠️ WARNING: 2 quota(s) approaching limit',
+                metrics: [
+                    { metric: 'Supabase Storage', current: '325 MB', limit: '500 MB', percent: 65, status: '🟡 WARNING: Plan archival' },
+                    { metric: 'Drive Storage', current: '73 GB', limit: '105 GB', percent: 70, status: '🟡 WARNING: Monitor closely' },
+                    { metric: 'GAS Daily Calls', current: '1,240', limit: '20,000', percent: 6, status: '🟢 OK' },
+                    { metric: 'GitHub Actions', current: '89 min', limit: '2,000 min', percent: 4, status: '🟢 OK' }
+                ]
+            },
+            {
+                status: 'ERROR',
+                message: '🚨 CRITICAL: 1 quota(s) exceeded',
+                metrics: [
+                    { metric: 'Supabase Storage', current: '425 MB', limit: '500 MB', percent: 85, status: '🔴 CRITICAL: Archive now!' },
+                    { metric: 'Drive Storage', current: '87 GB', limit: '105 GB', percent: 83, status: '🔴 CRITICAL: Add account!' },
+                    { metric: 'GAS Daily Calls', current: '16,500', limit: '20,000', percent: 82, status: '🟡 WARNING: High usage' },
+                    { metric: 'GitHub Actions', current: '234 min', limit: '2,000 min', percent: 12, status: '🟢 OK' }
+                ]
+            }
+        ];
+
+        let dataIndex = 0;
+        let autoRefreshInterval = null;
+        let logs = JSON.parse(localStorage.getItem('phiRingLogs')) || [];
+
+        // ═══════════════════════════════════════════════════════════
+        // DASHBOARD FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+        function refreshDashboard() {
+            const data = ROTATING_DATA[dataIndex];
+            updateStatusBanner(data);
+            renderMetrics(data);
+            updateSystemInfo();
+            dataIndex = (dataIndex + 1) % ROTATING_DATA.length;
+        }
+
+        function updateStatusBanner(data) {
+            const banner = document.getElementById('statusBanner');
+            banner.textContent = data.message;
+            banner.className = 'status-banner ' + 
+                (data.status === 'ERROR' ? 'error' : 
+                 data.status === 'WARNING' ? 'warning' : '');
+        }
+
+        function renderMetrics(data) {
+            const grid = document.getElementById('metricsGrid');
+            grid.innerHTML = data.metrics.map(m => {
+                const statusClass = getStatusClass(m.status);
+                const barClass = m.percent > 80 ? 'critical' : m.percent > 60 ? 'warning' : '';
+                return `
+                    <div class="metric-card ${statusClass}">
+                        <h3><span class="icon">${getMetricIcon(m.metric)}</span>${m.metric}</h3>
+                        <div class="metric-label">Current Usage</div>
+                        <div class="metric-value">${m.current} / ${m.limit}</div>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill ${barClass}" style="width: ${m.percent}%"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="color: #888; font-size: 0.85em;">${m.percent.toFixed(1)}% used</span>
+                            <span class="metric-status ${statusClass}">${getStatusText(m.status)}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function getStatusClass(status) {
+            if (status.includes('🔴') || status.includes('CRITICAL')) return 'critical';
+            if (status.includes('🟡') || status.includes('WARNING')) return 'warning';
+            return 'ok';
+        }
+
+        function getStatusText(status) {
+            if (status.includes('🔴') || status.includes('CRITICAL')) return '🔴 Critical';
+            if (status.includes('🟡') || status.includes('WARNING')) return '🟡 Warning';
+            return '🟢 OK';
+        }
+
+        function getMetricIcon(metricName) {
+            if (metricName.includes('Supabase')) return '💾';
+            if (metricName.includes('Drive')) return '☁️';
+            if (metricName.includes('GAS')) return '⚡';
+            if (metricName.includes('GitHub')) return '🔧';
+            return '📊';
+        }
+
+        function updateSystemInfo() {
+            const states = ['1 of 3', '2 of 3', '3 of 3'];
+            document.getElementById('currentState').textContent = states[dataIndex];
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+            document.getElementById('logCount').textContent = logs.length;
+        }
+
+        function resetDemo() {
+            dataIndex = 0;
+            refreshDashboard();
+            alert('📱 Demo reset to State 1 (ALL OK)');
+        }
+
+        function toggleAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                document.getElementById('autoRefresh').textContent = 'OFF';
+                alert('⏸️ Auto-refresh disabled');
+            } else {
+                autoRefreshInterval = setInterval(refreshDashboard, 5000);
+                document.getElementById('autoRefresh').textContent = 'ON (5s)';
+                alert('▶️ Auto-refresh enabled (5 seconds)');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // OFFLINE LOGGING SYSTEM
+        // ═══════════════════════════════════════════════════════════
+        function openLogModal() {
+            document.getElementById('logModal').style.display = 'block';
+            renderLogList();
+        }
+
+        function closeLogModal() {
+            document.getElementById('logModal').style.display = 'none';
+            document.getElementById('logInput').value = '';
+        }
+
+        function saveLog() {
+            const input = document.getElementById('logInput');
+            const text = input.value.trim();
+            if (!text) return alert('⚠️ Cannot save empty log.');
+
+            const entry = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('en-TT', { 
+                    timeZone: 'America/Port_of_Spain',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                }),
+                text: text
+            };
+
+            logs.unshift(entry);
+            localStorage.setItem('phiRingLogs', JSON.stringify(logs));
+            alert('✅ Log saved to device storage');
+
+            input.value = '';
+            renderLogList();
+            updateSystemInfo();
+        }
+
+        function renderLogList() {
+            const list = document.getElementById('logList');
+            if (logs.length === 0) {
+                list.innerHTML = '<p style="color:#888; text-align:center; padding:20px;">No logs yet. Start logging.</p>';
+                return;
+            }
+
+            list.innerHTML = logs.map(log => `
+                <div class="log-entry">
+                    <div class="log-timestamp">${escapeHtml(log.timestamp)} AST</div>
+                    <div class="log-text">${escapeHtml(log.text)}</div>
+                    <button class="log-delete" onclick="deleteLog(${log.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteLog(id) {
+            if (!confirm('Delete this log entry?')) return;
+            logs = logs.filter(l => l.id !== id);
+            localStorage.setItem('phiRingLogs', JSON.stringify(logs));
+            renderLogList();
+            updateSystemInfo();
+        }
+
+        function clearAllLogs() {
+            if (!confirm('⚠️ DELETE ALL LOGS? This cannot be undone.')) return;
+            logs = [];
+            localStorage.setItem('phiRingLogs', JSON.stringify(logs));
+            renderLogList();
+            updateSystemInfo();
+            alert('🗑️ All logs deleted');
+        }
+
+        function downloadLogs() {
+            if (logs.length === 0) return alert('No logs to export.');
+
+            const content = logs.map(l => `[${l.timestamp} AST]\n${l.text}\n\n`).join('');
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `phi-ring-log-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+            alert('📄 Log exported as .txt to Downloads');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════════════════════
+        window.onload = function () {
+            console.log('φ-RING Mobile Console v0.9.5 loaded');
+            refreshDashboard();
+            updateSystemInfo();
+        };
+
+        // Prevent double-tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
