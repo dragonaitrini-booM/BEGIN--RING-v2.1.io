@@ -1,0 +1,14 @@
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run security tests only
+npm run test:security
+
+# Run in watch mode
+npm run test:watch
+
+# Run specific test suite
+npm test -- --testNamePattern="Post-Quantum"
