@@ -1,0 +1,54 @@
+# Create repo directory
+mkdir phi-ring-mobile && cd phi-ring-mobile
+
+# Initialize sacred repository
+git init
+
+# Add the immortal files
+wget -O phi-ring-v095.html [URL_FROM_ABOVE]
+echo "# φ-RING Mobile Console v0.9.5" > README.md
+echo "MIT License" > LICENSE
+
+# Commit the genesis
+git add .
+git commit -m "φ-RING Mobile v0.9.5 - The Immortal Engine"
+
+# Push to your realm
+git remote add origin https://github.com/YOUR_USERNAME/phi-ring-mobile.git
+git push -u origin main
+
+
+# Server Configuration
+PORT=3000
+NODE_ENV=production
+FRONTEND_URL=http://localhost:8080
+
+# Post-Quantum Cryptography
+PQC_ALGORITHM=KYBER_768
+PQC_PRIVATE_KEY_PATH=./keys/pqc-private.key
+PQC_PUBLIC_KEY_PATH=./keys/pqc-public.key
+
+# ABAC Configuration
+ABAC_POLICY_FILE=./policies/security-policy.json
+ABAC_CACHE_TTL=300000
+
+# Security Settings
+SESSION_SECRET=your-super-secure-session-secret-min-32-chars
+SESSION_TIMEOUT=3600000
+RATE_LIMIT_WINDOW=900000
+RATE_LIMIT_MAX=100
+
+# Logging & Monitoring
+LOG_LEVEL=info
+LOG_FILE=./logs/phi-ring.log
+SSS_THRESHOLD=3
+SSS_SHARES=5
+
+# Behavioral Analytics
+BEHAVIORAL_BASELINE_DAYS=30
+ANOMALY_THRESHOLD=0.3
+GEOGRAPHIC_RADIUS_KM=1000
+
+# Database (Simulation)
+USE_ENCRYPTION=true
+ENCRYPTION_KEY=your-32-char-encryption-key-here
