@@ -1,0 +1,5 @@
+# This file is saved as Cargo.toml
+[dependencies]
+pqc-kyber = "0.7.1"
+pqc-dilithium = "0.7.1"
+# ... other dependencies
