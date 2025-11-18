@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('../server');
-const { PQCEngine } = require('../utils/pqc');
+const app = require('../../server');
+const { PQCEngine } = require('../../utils/pqc');
 
 describe('φ-RING Security Integration Tests', () => {
     let apiKey = null;
