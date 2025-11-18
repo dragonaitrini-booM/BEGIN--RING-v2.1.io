@@ -65,7 +65,31 @@
   </div>
 </main>
 
-<div class="orb-container"><div class="orb" id="orb" data-up="UP 47h 22m"></div></div>
+<div class="orb-container">
+  <div class="orb" id="orb">
+    <div class="orb-text">
+      <span class="val" id="orbVal">--</span>
+      <span class="label">SYSTEM LOAD</span>
+    </div>
+    <div class="interlink"></div>
+  </div>
+</div>
+
+<div id="modal" class="modal-container">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>CONFIRM ACTION</h3>
+      <span class="modal-close" id="modalClose">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p id="modalText">Are you sure?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn secondary" id="modalCancel">CANCEL</button>
+      <button class="btn primary" id="modalConfirm">CONFIRM</button>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
