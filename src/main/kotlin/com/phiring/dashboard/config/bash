@@ -1,1 +1,8 @@
 ./gradlew clean run
+
+export CF_TOKEN="your_cloudflare_api_token"
+export SB_SERVICE_KEY="your_supabase_service_key"
+# ... export other keys (GH_PAT, GAS_KEY, SB_ANON_KEY, SB_URL)
+
+./gradlew installDist
+build/install/phiring-dashboard/bin/app  # The exact path may vary slightly
