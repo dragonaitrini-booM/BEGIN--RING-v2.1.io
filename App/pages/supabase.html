@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Command Deck — Resource Monitoring</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Minimal particle field (low energy: only 40 particles, no shadows on mobile) -->
+    <div id="particleField"></div>
+
+    <!-- Global Status Banner -->
+    <div id="globalStatusBanner" class="status-banner status-online has-tooltip">
+        ✅ ONLINE
+        <span class="tooltip top">Real-time backend connectivity status<br>• ✅ ONLINE: Normal operation<br>• ⚠️ WARNING: Degraded / high usage<br>• 🚨 CRITICAL OFFLINE MODE: Using last cached data</span>
+    </div>
+
+    <!-- Primary Controls -->
+    <div id="mainControls">
+        <!-- MANUAL REFRESH: Neon Cyan, fires POST /metrics/refresh -->
+        <button id="refreshButton" class="neon-button has-tooltip refresh-button">
+            🔄 MANUAL REFRESH
+            <span class="tooltip">Triggers heavy unified POST /metrics/refresh (Master Fetch)<br>~2.5 KB outbound • Use sparingly on metered connections</span>
+        </button>
+        <!-- SETTINGS: Steel-Gray, pulses Electric Violet on hover, slides in overlay -->
+        <button id="settingsToggle" class="neon-button has-tooltip settings-button">
+            ⚙️ SETTINGS
+            <span class="tooltip">Advanced configuration panel<br>All changes persisted to localStorage<br>Requires APPLY CHANGES to take effect</span>
+        </button>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <main id="dashboardGrid">
+
+        <!-- Supabase Neural Core -->
+        <section class="card supabase-card has-tooltip" >
+            <header class="card-header" onclick="toggleDetails('supabaseDetails', 'supabaseToggle')">
+                ⚛️ SUPABASE NEURAL CORE <span class="toggle-arrow" id="supabaseToggle">▼</span>
+            </header>
+            <div class="card-body">
+                <div class="summary-metrics" id="supabaseSummary"></div>
+                <!-- Details panel unfolds like petals of light -->
+                <div id="supabaseDetails" class="details-panel collapsed">
+                    <div class="metric full-width">
+                        <span class="label">Total DB Size (Primary Cost)</span>
+                        <span class="value" id="dbSize">—</span>
+                        <div class="holo-bar-container"><div class="holo-bar" id="dbBar"></div></div>
+                    </div>
+                    <div class="metric full-width critical">
+                        <span class="label">Egress Bandwidth (Monthly)</span>
+                        <span class="value" id="egress">—</span>
+                        <div class="holo-bar-container"><div class="holo-bar" id="egressBar"></div></div>
+                    </div>
+                    <div class="metric">
+                        <span class="label">Function Invocations</span>
+                        <span class="value" id="fnCalls">—</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">Avg Latency</span>
+                        <span class="value" id="fnLatency">—</span>
+                    </div>
+                    <!-- Sparkline Charts (Rendered on demand) -->
+                    <div class="chart-container" id="supabaseCharts">
+                        <canvas id="dbSizeChart" width="300" height="100"></canvas>
+                        <canvas id="egressChart" width="300" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <span class="tooltip">Core Supabase monitoring • Expand for detailed metrics & sparklines<br>Data loaded on-demand (bandwidth efficient)</span>
+        </section>
+
+        <!-- Other External Service Cards (Simplified for brevity, but ready to unfold) -->
+        <section class="card cloudflare-card has-tooltip">
+            <header class="card-header" onclick="toggleDetails('cloudflareDetails', 'cfToggle')">
+                ☁️ CLOUDFLARE <span class="toggle-arrow" id="cfToggle">▼</span>
+            </header>
+            <div class="card-body">
+                <div class="summary-metrics" id="cloudflareSummary">Workers Usage: —</div>
+                <div id="cloudflareDetails" class="details-panel collapsed"></div>
+            </div>
+            <span class="tooltip">Cloudflare Workers & DNS monitoring<br>Critical metric shown in header</span>
+        </section>
+
+        <section class="card github-card has-tooltip">
+            <header class="card-header" onclick="toggleDetails('githubDetails', 'ghToggle')">
+                ⎈ GITHUB <span class="toggle-arrow" id="ghToggle">▼</span>
+            </header>
+            <div class="card-body">
+                <div class="summary-metrics" id="githubSummary">Actions Minutes: —</div>
+                <div id="githubDetails" class="details-panel collapsed"></div>
+            </div>
+            <span class="tooltip">GitHub Actions minutes & billing<br>Critical metric shown in header</span>
+        </section>
+
+        <section class="card gas-card has-tooltip">
+            <header class="card-header" onclick="toggleDetails('gasDetails', 'gasToggle')">
+                ⊞ GAS <span class="toggle-arrow" id="gasToggle">▼</span>
+            </header>
+            <div class="card-body">
+                <div class="summary-metrics" id="gasSummary">Executions: —</div>
+                <div id="gasDetails" class="details-panel collapsed"></div>
+            </div>
+            <span class="tooltip">Google Apps Script execution monitoring<br>Critical metric shown in header</span>
+        </section>
+
+    </main>
+
+    <!-- Log System (The Void) -->
+    <section id="logSystem">
+        <input type="text" id="logInput" placeholder="Enter note or log entry..." autocomplete="off">
+        <!-- SAVE LOG: Matte Black, triggers SHATTER and POST /logs/share -->
+        <button id="saveLogBtn" class="neon-button has-tooltip save-button">
+            💾 SAVE LOG
+            <span class="tooltip">Saves locally + triggers POST /logs/share with Shamir Secret Sharing<br>k-out-of-n configured in Settings</span>
+        </button>
+        <!-- VIEW HISTORY: Toggles the log void -->
+        <button id="viewHistoryBtn" class="neon-button has-tooltip history-button">
+            📂 VIEW HISTORY
+            <span class="tooltip">View locally stored logs (offline-first)</span>
+        </button>
+        <!-- Log list (The Void) -->
+        <div id="logList" class="log-list hidden"></div>
+    </section>
+
+    <!-- System Info (Floating Text, Warps on change) -->
+    <div id="systemInfoPanel" class="has-tooltip">
+        Last Sync: <span id="lastSyncTime">--:--</span> | Auto-Refresh: <span id="refreshIntervalDisplay">5s</span>
+        <span class="tooltip">Real-time system metadata<br>Last Sync updates on successful fetch</span>
+    </div>
+
+    <!-- Advanced Settings Overlay (Black Glass, Slides in from right) -->
+    <div id="settingsPanel" class="overlay hidden">
+        <div class="settings-content">
+            <h2 class="panel-title">ADVANCED CONFIGURATION PANEL</h2>
+
+            <section class="settings-group">
+                <h3>Monitoring & Refresh Controls</h3>
+                <div class="setting has-tooltip">
+                    <label>Auto-Refresh Interval</label>
+                    <div class="slider-group">
+                        <input type="range" id="refreshIntervalSlider" min="0" max="30" value="5">
+                        <input type="number" id="refreshIntervalInput" value="5" min="0" max="30"><span class="unit">s</span>
+                    </div>
+                    <span class="tooltip">Controls GET /metrics/latest polling<br>0s = OFF (maximum energy saving)<br>Default 5s balances freshness vs cost</span>
+                </div>
+
+                <div class="setting has-tooltip">
+                    <label>Low-Latency Mode</label>
+                    <label class="switch">
+                        <input type="checkbox" id="lowLatencyToggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="tooltip">Extreme efficiency mode<br>Caps refresh at 30s, disables charts, limits UI updates<br>~70% resource reduction on OLED/mobile</span>
+                </div>
+
+                <div class="setting has-tooltip">
+                    <label>Historical Window</label>
+                    <select id="historicalWindow">
+                        <option>1h</option>
+                        <option>6h</option>
+                        <option selected>24h</option>
+                        <option>7 Days</option>
+                    </select>
+                    <span class="tooltip">Time range for historical sparkline data<br>Larger windows increase payload size</span>
+                </div>
+            </section>
+
+            <section class="settings-group">
+                <h3>Alert Thresholds</h3>
+                <div class="setting has-tooltip">
+                    <label>Egress Warning (%)</label>
+                    <input type="number" id="egressWarningInput" value="80" min="50" max="95">
+                    <span class="tooltip">Triggers orange/red warning on Egress Holo-Bar<br>Recommended 80–85% for Pro plan</span>
+                </div>
+                <div class="setting has-tooltip">
+                    <label>Fn Call Limit Alert</label>
+                    <input type="number" id="fnLimitInput" value="100000">
+                    <span class="tooltip">Banner warning when invocations exceed this value<br>Prevents surprise billing</span>
+                </div>
+            </section>
+
+            <section class="settings-group">
+                <h3>Security & Logs</h3>
+                <div class="setting has-tooltip">
+                    <label>SSS Share Count</label>
+                    <div class="slider-group">
+                        <input type="range" id="sssShareSlider" min="2" max="5" value="3">
+                        <span id="sssShareValue">3</span>
+                    </div>
+                    <span class="tooltip">k-out-of-n Shamir Secret Sharing for logs<br>3 = balanced security/performance</span>
+                </div>
+
+                <button id="forceResyncBtn" class="neon-button small resync-button">
+                    FORCE LOG RE-SYNC
+                </button>
+
+                <div class="static-status has-tooltip">
+                    API Key Status: <span id="apiKeyStatus">4 Keys Secured Behind BFF</span>
+                    <span class="tooltip">Cloudflare • GitHub • GAS • Service Role<br>Never exposed to frontend • Verified on boot</span>
+                </div>
+            </section>
+
+            <div class="panel-footer">
+                <button id="cancelBtn" class="neon-button cancel-button">❌ CANCEL</button>
+                <button id="applyBtn" class="neon-button primary apply-button">✅ APPLY CHANGES</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
