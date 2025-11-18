@@ -1,0 +1,14 @@
+# src/main/resources/application.yaml
+ktor:
+  deployment:
+    port: 8080
+
+secrets:
+  # The values on the right (${...}) are substituted by Ktor from your environment variables at startup.
+  cloudflare_token: ${CF_TOKEN}
+  github_pat: ${GH_PAT}
+  gas_key: ${GAS_KEY}
+  supabase_anon_key: ${SB_ANON_KEY}
+  supabase_service_role_key: ${SB_SERVICE_KEY}
+  supabase_url: ${SB_URL}
+  sss_share_count: 5
