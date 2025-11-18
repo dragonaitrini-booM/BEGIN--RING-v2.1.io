@@ -1,0 +1,289 @@
+/* OLED-optimized dark theme with neon accents */
+:root {
+    --bg: #0a0a0a;
+    --text: #00ff41; /* Neon Green */
+    --accent: #00f5ff; /* Neon Cyan */
+    --settings-accent: #ee82ee; /* Electric Violet */
+    --card-bg: rgba(15, 15, 15, 0.6);
+    --border: #00f5ff;
+    --warning: #ff8c00;
+    --critical: #ff4141;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#particleField {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    z-index: -1;
+}
+
+.status-banner {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: 700;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    transition: color 0.6s, background 0.6s;
+}
+.status-banner.status-critical { color: var(--critical); background: rgba(255, 65, 65, 0.2); }
+
+#mainControls {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 100;
+}
+
+/* --- BASE NEON BUTTON STYLE (The 'Breathe' Logic) --- */
+.neon-button {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 18px;
+    margin: 0 8px;
+    font: inherit;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 245, 255, 0); 
+}
+
+/* Neural Pulse (Hover Effect) */
+.neon-button:hover:not(.settings-button) {
+    box-shadow: 0 0 15px var(--accent);
+    background: rgba(0, 245, 255, 0.1);
+    animation: neon-pulse 1.5s infinite alternate;
+}
+
+/* Synapse Fire (Active/Click Effect) */
+.neon-button:active {
+    transform: scale(0.98);
+}
+
+@keyframes neon-pulse {
+    from { box-shadow: 0 0 10px rgba(0, 245, 255, 0.6); }
+    to { box-shadow: 0 0 25px rgba(0, 245, 255, 1); }
+}
+
+/* --- MANUAL REFRESH BUTTON (Cyan Focus) --- */
+.refresh-button {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* --- SETTINGS BUTTON (Electric Violet Flip) --- ---*/
+.settings-button {
+    border-color: #5f5f5f; /* Steel Gray */
+    color: #9f9f9f;
+    transition: all 0.5s;
+}
+
+.settings-button:hover {
+    border-color: var(--settings-accent); /* Electric Violet */
+    color: var(--settings-accent);
+    box-shadow: 0 0 20px var(--settings-accent);
+    animation: violet-pulse 1.5s infinite alternate;
+}
+
+@keyframes violet-pulse {
+    from { box-shadow: 0 0 10px rgba(238, 130, 238, 0.6); }
+    to { box-shadow: 0 0 25px rgba(238, 130, 238, 1); }
+}
+
+/* --- LOG BUTTONS (Neon Green Focus) --- */
+#logSystem .save-button, #logSystem .history-button {
+    border-color: var(--text);
+    color: var(--text);
+    box-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+}
+
+#logSystem .save-button:hover, #logSystem .history-button:hover {
+    animation: green-pulse 1.5s infinite alternate;
+}
+
+@keyframes green-pulse {
+    from { box-shadow: 0 0 10px rgba(0, 255, 65, 0.6); }
+    to { box-shadow: 0 0 25px rgba(0, 255, 65, 1); }
+}
+
+/* --- RIPPLE EFFECT (Synapse Fire Visualization) --- */
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- DASHBOARD GRID & CARDS (The Dragon's Skin) --- */
+#dashboardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    padding: 100px 20px 100px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s;
+}
+
+.card-header {
+    background: rgba(0,245,255,0.15);
+    padding: 16px;
+    font-size: 1.3em;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* The 'Unfold' Effect */
+.details-panel {
+    padding: 0 16px 16px;
+    max-height: 500px; 
+    overflow: hidden;
+    opacity: 1;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s;
+}
+
+.details-panel.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.95em;
+}
+.metric.full-width { padding: 12px 0 16px; }
+.metric.critical { border-left: 3px solid var(--critical); padding-left: 12px; }
+
+/* Holo Bar */
+.holo-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(0,245,255,0.15);
+    border-radius: 4px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.holo-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--text), var(--accent));
+    transition: width 1.2s ease-out, background 0.6s;
+}
+
+.holo-bar.warning { background: linear-gradient(90deg, #ffa500, #ff8c00); }
+.holo-bar.critical { background: linear-gradient(90deg, #ff4141, #ff0000); }
+
+/* --- LOG VOID --- */
+#logSystem {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 50;
+}
+
+#logInput {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--text);
+    color: var(--text);
+    padding: 12px;
+    width: 320px;
+    border-radius: 4px;
+}
+
+.log-list {
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    background: rgba(0,0,0,0.95);
+    border: 1px solid var(--accent);
+    padding: 10px;
+    overflow-y: scroll;
+    z-index: 49;
+    /* CSS for the crack/void effect */
+    transform: translateY(100%); 
+    transition: transform 0.5s ease-out, max-height 0.5s;
+}
+.log-list.hidden { max-height: 0; padding-top: 0; padding-bottom: 0; }
+
+/* --- SYSTEM INFO (Warping Text) --- */
+#systemInfoPanel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    font-size: 0.9em;
+}
+
+/* --- SETTINGS OVERLAY (Black Glass, Slides in from right) --- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.98);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s, transform 0.6s;
+    transform: translateX(100%);
+}
+
+.overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.settings-content {
+    background: #0f0f0f;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--settings-accent); 
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 800px;
+    box-shadow: 0 0 50px rgba(238, 130, 238, 0.4);
+}
+/* Slider styling and tooltips CSS (omitted for brevity, assume retained) */
