@@ -1,0 +1,5 @@
+# Get this key from Google Cloud Console (APIs & Services -> Credentials)
+export DRIVE_API_KEY=AIzaSyDxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
+
+# Run the Ktor server
+./gradlew run
