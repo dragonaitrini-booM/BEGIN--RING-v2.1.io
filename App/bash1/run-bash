@@ -1,0 +1,10 @@
+# Run the image in detached mode (-d), mapping port 8080
+docker run -d -p 8080:8080 \
+  -e SB_SERVICE_KEY="<YOUR_PROD_KEY_HERE>" \
+  -e CF_TOKEN="<YOUR_CF_TOKEN_HERE>" \
+  -e GH_PAT="<YOUR_GH_PAT_HERE>" \
+  -e GAS_KEY="<YOUR_GAS_KEY_HERE>" \
+  -e SB_ANON_KEY="<YOUR_SB_ANON_KEY_HERE>" \
+  -e SB_URL="<YOUR_SB_URL_HERE>" \
+  --name phiring-backend-prod \
+  phiring-dashboard:latest
