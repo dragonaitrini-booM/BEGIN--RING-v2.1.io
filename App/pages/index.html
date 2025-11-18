@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>φ-RING Mobile Console v0.9.5</title>
+    <link rel="stylesheet" href="css/styles.css">
+    </head>
+<body>
+    <div class="mode-badge">📱 OFFLINE v0.9.5</div>
+
+    <div class="header">
+        <h1>🔐 φ-RING MOBILE</h1>
+        <p class="subtitle">Offline Console · Samsung A53</p>
+        <span class="version">v0.9.5-mobile</span>
+    </div>
+
+    <div id="statusBanner" class="status-banner">✅ ALL SYSTEMS OPERATIONAL</div>
+
+    <div id="metricsGrid" class="metrics-grid"></div>
+
+    <div class="actions">
+        <button onclick="refreshDashboard()">🔄 Next State</button>
+        <button onclick="resetDemo()" class="secondary">🔁 Reset</button>
+        <button onclick="toggleAutoRefresh()" class="secondary">⏯️ Auto</button>
+        <button onclick="openLogModal()" class="secondary">📝 Log</button>
+    </div>
+
+    <div class="info-panel">
+        <h3>📋 System Information</h3>
+        <div class="info-grid">
+            <div class="info-item"><span class="label">Mode:</span><span class="value">Offline + Logging</span></div>
+            <div class="info-item"><span class="label">Device:</span><span class="value">Samsung A53</span></div>
+            <div class="info-item"><span class="label">Current State:</span><span class="value" id="currentState">1 of 3</span></div>
+            <div class="info-item"><span class="label">Last Updated:</span><span class="value" id="lastUpdated">—</span></div>
+            <div class="info-item"><span class="label">Auto-Refresh:</span><span class="value" id="autoRefresh">OFF</span></div>
+            <div class="info-item"><span class="label">Saved Logs:</span><span class="value" id="logCount">0</span></div>
+            <div class="info-item"><span class="label">Monthly Cost:</span><span class="value">$0.00</span></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>φ-RING Mobile v0.9.5 · Trinidad Protocol</p>
+        <p style="font-size: 0.85em; margin-top: 8px; color: #555;">
+            "Zero cloud. Zero cost. Maximum control."
+        </p>
+    </div>
+
+    <div id="logModal">
+        <div class="log-container">
+            <h2>📓 φ-RING DATA LOG</h2>
+            
+            <textarea id="logInput" placeholder="Enter event, SSS share, or note...&#10;Example: SSS Share #1: xxxxx-xxxxx&#10;Example: Critical quota reached at 18:45 AST"></textarea>
+            
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button onclick="saveLog()">💾 Save</button>
+                <button onclick="downloadLogs()" class="secondary">⬇️ Export</button>
+                <button onclick="clearAllLogs()" style="background:#ff8c00; color:#000;">🗑️ Clear All</button>
+                <button onclick="closeLogModal()" style="background:#ff4141; color:#fff;">✖️ Close</button>
+            </div>
+
+            <div id="logList">
+                <p style="color:#888; text-align:center; padding:20px;">No logs yet. Start logging.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
