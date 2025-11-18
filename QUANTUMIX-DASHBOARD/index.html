@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QUANTUMIX DASHBOARD • 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="dark">
+<header>
+  <div class="logo">QUANTUMIX</div>
+  <nav>
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Metrics</a>
+    <a href="#">Settings</a>
+    <a href="#">Reports</a>
+  </nav>
+  <div class="user">User</div>
+</header>
+
+<main>
+  <div class="panel drive">
+    <h2>GOOGLE DRIVE NEST</h2>
+    <div class="holo-bar" data-service="Drive" data-usage="71"><div class="label">Total Storage <span class="value">71%</span></div></div>
+    <div class="holo-bar" data-service="GAS" data-usage="58"><div class="label">GAS Daily Calls <span class="value">58%</span></div></div>
+  </div>
+
+  <div class="panel supabase">
+    <h2>SUPABASE NEURAL CORE</h2>
+    <div class="holo-bar" data-service="Supabase" data-usage="42"><div class="label">Database Load <span class="value">42%</span></div></div>
+    <div class="holo-bar" data-service="Rows" data-usage="89"><div class="label">Row Count <span class="value">89%</span></div></div>
+  </div>
+
+  <div class="panel matrix">
+    <h2 onclick="toggleMatrix()">GITHUB & CLOUDFLARE MATRIX <span id="matrixToggle" class="collapse-toggle">Down Arrow</span></h2>
+    <div class="holo-bar" data-service="Actions" data-usage="47" id="actionsBar"><div class="label">ACTIONS MINUTES <span class="value">47%</span></div></div>
+    <div class="holo-bar" data-service="Workers" data-usage="23" id="workersBar"><div class="label">WORKERS / R2 <span class="value">23%</span></div></div>
+
+    <div id="matrixDetails" class="details-content">
+      <div class="metric-subheader">GitHub Core</div>
+      <div class="info-grid">
+        <div class="info-item"><span>Minutes Used</span><span id="ghMinutes">1,938 / 2,000</span></div>
+        <div class="info-item"><span>CI Failures (24h)</span><span id="ghFailures" class="alert-red">8</span></div>
+      </div>
+      <div class="metric-subheader">Cloudflare Edge</div>
+      <div class="info-grid">
+        <div class="info-item"><span>R2 Egress</span><span id="cfR2">0.7 GB / 10 GB</span></div>
+        <div class="info-item"><span>Workers CPU</span><span id="cfCPU">4.3 s</span></div>
+        <div class="info-item"><span>KV Reads</span><span id="cfKV">67,320</span></div>
+        <div class="info-item"><span>Last Billed</span><span id="cfBill">2025-11-18</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel settings">
+    <h2>GLOBAL CONFIGURATION TERMINAL</h2>
+    <div class="row"><label>DARK MODE SYNC</label><input type="checkbox" id="dark" checked class="switch"></div>
+    <div class="row"><label>LOW BANDWIDTH PROTOCOL</label><input type="checkbox" id="lbp" class="switch"></div>
+    <div class="row"><label>DATA REFRESH CYCLE (s)</label><input type="number" id="ref" value="30" min="5" max="300"></div>
+    <div class="row"><label>CRITICAL THRESHOLD (%)</label><input type="number" id="thr" value="80" min="50" max="99"></div>
+    <div class="actions">
+      <button class="btn primary" id="save">ACTIVATE CONFIG</button>
+      <button class="btn secondary" id="reset">RESET TO FACTORY</button>
+    </div>
+  </div>
+</main>
+
+<div class="orb-container"><div class="orb" id="orb" data-up="UP 47h 22m"></div></div>
+
+<script src="app.js"></script>
+</body>
+</html>
