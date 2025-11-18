@@ -1,0 +1,80 @@
+/* Custom CSS additions to enhance the neural pulse and synapse fire effects */
+
+/*--- NEON PULSE / HOVER ---*/
+.neon-button {
+    /* Existing Styles */
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 18px;
+    margin: 0 8px;
+    font: inherit;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother transition */
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden; /* Crucial for the ripple/orbit effect */
+    box-shadow: 0 0 5px rgba(0, 245, 255, 0); /* Initial soft glow off */
+}
+
+/* 1. Breathe (Hover Effect) - The Neural Pulse */
+.neon-button:hover, .neon-button.primary {
+    box-shadow: 0 0 15px var(--accent); /* Subtle, deeper cyan glow */
+    background: rgba(0, 245, 255, 0.1);
+    animation: neon-pulse 1.5s infinite alternate; /* The 'breathe' effect */
+}
+
+/* 2. Synapse Fire (Active/Click Effect) - The Ripple */
+.neon-button:active {
+    box-shadow: 0 0 40px var(--accent);
+    transform: scale(0.98); /* Slight press */
+}
+
+/* Keyframes for the 'Breathe' (Inhale/Exhale) */
+@keyframes neon-pulse {
+    from { box-shadow: 0 0 10px rgba(0, 245, 255, 0.6); }
+    to { box-shadow: 0 0 25px rgba(0, 245, 255, 1); }
+}
+
+/* --- SETTINGS Specific Hover (Steel-Gray to Electric Violet) ---*/
+#settingsToggle {
+    border-color: #5f5f5f; /* Steel Gray */
+    color: #9f9f9f;
+    transition: all 0.5s;
+}
+
+#settingsToggle:hover {
+    border-color: #ee82ee; /* Electric Violet */
+    color: #ee82ee;
+    box-shadow: 0 0 20px #ee82ee;
+    animation: violet-pulse 1.5s infinite alternate;
+}
+
+@keyframes violet-pulse {
+    from { box-shadow: 0 0 10px rgba(238, 130, 238, 0.6); }
+    to { box-shadow: 0 0 25px rgba(238, 130, 238, 1); }
+}
+
+
+/* --- SLIDER Style (The G-off drag) ---*/
+.slider-group input[type=range] {
+    /* Base style for the track */
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 245, 255, 0.2);
+    border-radius: 5px;
+}
+
+.slider-group input[type=range]::-webkit-slider-thumb {
+    /* Style for the thumb (The 'touch' point) */
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent);
+    transition: all 0.2s; /* Ensures it 'follows' smoothly */
+}
+/* The Holo-Bar and Sparkline CSS from the previous step ensures the collapsible cards and charts 'unfold' and are 'alive'. */
