@@ -43,7 +43,7 @@ const abacEngine = new ABACEngine();
 const sssEngine = new SSSEngine();
 
 // Advanced Rate Limiting
-app.use('/api/', advancedRateLimit);
+app.use('/api', advancedRateLimit);
 
 // Security Validation Middleware
 app.use(securityMiddleware);
