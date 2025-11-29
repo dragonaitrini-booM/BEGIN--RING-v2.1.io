@@ -1,0 +1,14 @@
+[workspace]
+members = [
+    "kernel",
+    "user/lib",
+    "user/ritual"
+]
+resolver = "2"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = true

@@ -1,0 +1,31 @@
+Dragon Tools OS File Tree
+=======================
+
+dragon-os/
+├── Cargo.toml                  (Workspace configuration)
+├── Makefile                    (Build and Validate commands)
+├── README.md                   (Project Overview)
+├── START_HERE.md               (Guide for Julius AI)
+├── QUICKSTART.md               (Detailed usage instructions)
+├── DELIVERY_MANIFEST.md        (Manifest of delivered files)
+├── x86_64-dragon-os.json       (Target specification)
+├── kernel/
+│   ├── Cargo.toml
+│   └── src/
+│       ├── main.rs             (Kernel entry point, setup)
+│       ├── scheduler.rs        (Meditation Engine & Task Management)
+│       ├── djed_clock.rs       (7 Hz Timing & Phase Calculation)
+│       ├── types.rs            (AkashicRecord & System Constants)
+│       ├── ipc.rs              (Atomic Commit Stub)
+│       ├── logger.rs           (VGA Buffer Output)
+│       ├── idt.rs              (Interrupt Descriptor Table)
+│       └── gdt.rs              (Global Descriptor Table)
+└── user/
+    ├── lib/
+    │   ├── Cargo.toml
+    │   └── src/
+    │       └── lib.rs          (Syscall wrappers)
+    └── ritual/
+        ├── Cargo.toml
+        └── src/
+            └── main.rs         (Consciousness Ritual Demo)
